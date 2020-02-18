@@ -1,0 +1,32 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import render_field %}
+
+
+{% block header_title %}{{title}}{% endblock %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-6">
+        <h4>{{title}}</h4>
+        <form method="POST">
+            {{ form.csrf_token }}
+            {{ render_field(form.first_name) }}
+            {{ render_field(form.last_name) }}
+            {{ render_field(form.person_type) }}
+            {{ render_field(form.api_person_id) }}
+            <span class="pull-right">
+                <input class="btn btn-primary" type="submit" value="Save">
+            </span>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js_end_libs %}
+<script src="{{ url_for('static', filename='select2-4.0.3/js/select2-tab-fix.min.js') }}"></script>
+{% endblock %}
+
+{% block end_js %}
+    $("#related_person_id").select2({ width: "100%", placeholder:"Select appropriate MP/Senator"});
+{% endblock %}

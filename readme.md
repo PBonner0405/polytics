@@ -1,0 +1,12 @@
+# Files to update
+- /Polytics.yaml
+    - Lines 9-10: Replace docker credentials
+    - Lines 125, 150, 175: Add appropriate docker images
+- /nginx/ssl
+    - add required certificates. Current versions uses cloudflare with origin validation and self-signed certs. See nginx.conf.
+-/extractor/src/utils.py
+    - Lines 47-49: update mailgun api credentials
+-/web/src/static/lobbying-group-heatmap.js
+    - Line 17: Change domain for api lookup
+-/web/src/static/lobbying-viz.js
+    - Line 9: Change domain for api lookup

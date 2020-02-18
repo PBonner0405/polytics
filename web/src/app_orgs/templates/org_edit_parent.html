@@ -1,0 +1,63 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import render_field %}
+
+
+{% block header_title %}Edit parent organization{% endblock %}
+
+{% block main_content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Edit Parent Organization</h3>
+          </div>
+          <div class="panel-body">
+              <form method="POST">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="dpoh-name"><span class="h4">{{ org.org_name }}</span></div>
+                      <ul class="list-unstyled">
+                          <li>Reviewed by: {{ org.reviewed_by }}</li>
+                          <li>Finalized by: {{ org.verified_by }}</li>
+                          <li>Flagged by: {{ org.flagged_by }}</li>
+
+                      </ul>
+                      {{ render_field(form.parent_edit_org_new_name) }}
+                      {{ form.csrf_token }}
+
+                  </div>
+              </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                            <input class="btn btn-primary" name="cancel" type="submit" value="Cancel">
+                            <span class="pull-right">
+                                {% if can_edit %}
+                                    <input class="btn btn-success" name="save" type="submit" value="Save & Finalize">
+
+                                {% else %}
+                                    <p>Cannot edit right now. Try again later.</p>
+
+                                {% endif %}
+                            </span>
+
+                    </div>
+                </div>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js_end_libs %}
+<script src="{{ url_for('static', filename='select2-4.0.3/js/select2-tab-fix.min.js') }}"></script>
+{% endblock %}
+
+{% block end_js %}
+    $("select").select2({ width: "100%", placeholder:"Select MP/Senator if appropriate."});
+{% endblock %}

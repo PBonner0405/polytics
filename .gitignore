@@ -1,0 +1,10 @@
+.DS_Store
+sg.sql
+*.pyc
+.svn
+*.py.*
+*.log
+*~
+*.pyo
+*.swp
+

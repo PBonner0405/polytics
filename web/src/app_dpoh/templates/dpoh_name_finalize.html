@@ -1,0 +1,65 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import render_field %}
+
+
+{% block header_title %}Review report{% endblock %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-12 stop-reviewing">
+        <a class="btn btn-xs btn-info" href="{{ url_for('dpoh.dpoh_name_unlock', dpoh_id=dpoh_name._id) }}">Stop reviewing</a>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <p><strong>Instructions:</strong> The name below exists in one or more communication report(s). We need to verify that the person named has been correctly identified as an MP or Senator or "Not an MP/Senator". If the person has been correctly identified, click "Finalize". If not, and the person is an MP/Senator, select their name from the drop down list. If the person is not an MP or Senator, select "Not MP/Senator" from the drop down list. If you need make a change, another person will be aksed to re-finalize the name based on your changes.</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-danger">
+          <div class="panel-heading">
+            <h3 class="panel-title">Finalize DPOH Name (Reviewed by: {{ dpoh_name.reviewed_by }})</h3>
+          </div>
+          <div class="panel-body">
+              <form method="POST">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="dpoh-name"><span class="h4">{{ dpoh_name.name }}</span>, {{ dpoh_name.title }} | {{ dpoh_name.inst }}</div>
+                      {{ render_field(form.person_id) }}
+                      {{ form.csrf_token }}
+
+                  </div>
+              </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <a class="btn btn-warning" href="{{ url_for('dpoh.dpoh_name_flag', dpoh_id=dpoh_name._id) }}">Flag for follow up</a>
+                            <span class="pull-right">
+                                {% if not can_verify %}
+                                    <p>You cannot finalize a name you reviewed.</p>
+                                {% else %}
+                                    <input class="btn btn-primary" type="submit" value="Finalize">
+                                {% endif %}
+                            </span>
+
+                    </div>
+                </div>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js_end_libs %}
+<script src="{{ url_for('static', filename='select2-4.0.3/js/select2-tab-fix.min.js') }}"></script>
+{% endblock %}
+
+{% block end_js %}
+    $("select").select2({ width: "100%", placeholder:"Select MP/Senator if appropriate."});
+{% endblock %}

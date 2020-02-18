@@ -1,0 +1,14 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import render_field, render_checkbox_field %}
+
+{% block header_title %}Login{% endblock %}
+
+
+{% block main_content %}
+    <form method="POST" action="/login/">
+        {{ form.hidden_tag() }}
+        {{ render_field(form.username) }}
+        {{ render_field(form.password) }}
+        <input class="btn btn-primary pull-right" type="submit" value="Login">
+    </form>
+{% endblock %}

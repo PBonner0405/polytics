@@ -1,0 +1,56 @@
+{% extends "_base.html" %}
+
+{% block header_title %}Home page{% endblock %}
+{% block page_title %}Home page{% endblock %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-bordered">
+            <thead>
+                <tr> <th>DPOH Names</th> <th>Count</th></tr>
+            </thead>
+            <tbody>
+                <tr> <th scope="row">To review</th> <td>{{ n['dpoh_names_to_review'] }}</td> </tr>
+                <tr> <th scope="row">To finalize</th> <td>{{ n['dpoh_names_to_finalize'] }}</td> </tr>
+                <tr> <th scope="row">Finalized</th> <td>{{ n['dpoh_names_finalized'] }}</td> </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead>
+                <tr> <th>Item</th> <th>Count</th></tr>
+            </thead>
+            <tbody>
+                <tr> <th scope="row">People</th> <td>{{ n['people'] }}</td> </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <div class="col-md-6">
+        <table class="table table-bordered">
+            <thead>
+                <tr> <th>Child orgs</th> <th>Count</th></tr>
+            </thead>
+            <tbody>
+                <tr> <th scope="row">To review</th> <td>{{ n['child_org_to_review'] }}</td> </tr>
+                <tr> <th scope="row">To finalize</th> <td>{{ n['child_org_to_verify'] }}</td> </tr>
+                <tr> <th scope="row">Finalized</th> <td>{{ n['child_org_finalized'] }}</td> </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead>
+                <tr> <th>Parent orgs</th> <th>Count</th></tr>
+            </thead>
+            <tbody>
+                <tr> <th scope="row">To finalize</th> <td>{{ n['parent_org_to_verify'] }}</td> </tr>
+                <tr> <th scope="row">Finalized</th> <td>{{ n['parent_org_finalized'] }}</td> </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>
+{% endblock %}

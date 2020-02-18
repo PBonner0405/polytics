@@ -1,0 +1,48 @@
+#main {
+margin-top: 20px;
+}
+
+.tag-list {
+padding-left: 10px;}
+
+.action_buttons {
+padding-left: 15px;
+}
+
+#main_content {
+margin-top: 20px;
+}
+
+.tab-pane {
+padding-top: 20px;
+}
+
+.label-link a{
+color: #FFFFFF;}
+
+.navbar {
+margin-bottom: 10px;}
+
+
+
+.right-border {
+border-right: 1px solid #ddd;
+
+}
+
+.button-row {
+padding-top: 20px;
+}
+
+.select2-search, .select2-search input {
+    width: 100% !important;
+}
+
+.dpoh-name {
+margin-bottom: 20px;
+}
+
+.stop-reviewing {
+margin-bottom: 10px;
+
+}

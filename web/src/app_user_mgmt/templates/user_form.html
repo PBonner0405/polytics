@@ -1,0 +1,51 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import render_field, render_checkbox_field, render_radio_field %}
+
+{% block header_title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block modal %}
+    {% if not new_user %}
+        <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Confirm delete user</h4>
+              </div>
+              <div class="modal-body">
+                <p>This will delete this user. It cannot be undone.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Don't delete</button>
+                <a type="button" href="{{ url_for('user_mgmt.user_delete', uid=uid) }}" class="btn btn-primary">Confirm delete user</a>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    {% endif %}
+{% endblock %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {{ render_field(form.username) }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.roles) }}
+            {{ render_checkbox_field(form.active) }}
+            {{ render_checkbox_field(form.email_system_updates) }}
+
+            <span class="pull-right">
+                <input class="btn btn-primary" type="submit" value="Submit">
+                {% if not new_user %}<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete">Delete user</button>{% endif %}
+            </span>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
+

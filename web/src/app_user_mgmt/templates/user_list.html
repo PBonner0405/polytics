@@ -1,0 +1,39 @@
+{% extends "_base.html" %}
+
+{% block header_title %}User List{% endblock %}
+{% block page_title %}User List{% endblock %}
+
+{% block main_content %}
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Roles</th>
+        <th>Active</th>
+        <th>Email updates</th>
+        <th>Most recent activity</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+      <tr>
+          <td><a href="{{ url_for('user_mgmt.user_edit', uid=user._id) }}">{{ user.username }}</a></td>
+          <td>{{ user.email }}</td>
+          <td>{{ ", ".join(user.roles) }}</td>
+          <td>{{ user.active }}</td>
+          <td>{{ user.email_system_updates }}</td>
+          <td>{{ user.most_recent_activity|date_str }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+
+</table>
+
+<span class="pull-right">
+    <a type="button" href="{{ url_for('user_mgmt.user_add') }}" class="btn btn-primary">Add new user</a>
+</span>
+
+
+{% endblock %}

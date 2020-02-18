@@ -1,0 +1,38 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import render_field, render_form %}
+
+{% block header_title %}API Test Page{% endblock %}
+{% block page_title %}API Test Page{% endblock %}
+
+{% block body_attr %}class="single-greenchamber"{% endblock %}
+
+{% block main_content %}
+    <div class="row">
+        <div class="col-md-12">
+            <form method="GET">
+                {{ render_field(form.gid) }}
+                <input class="btn btn-primary" type="submit" value="Submit">
+
+            </form>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div id="heatmap1"></div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js_end_libs %}
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="{{ url_for('static', filename='lobbying-group-heatmap.js') }}"></script>
+
+    <script>
+        group_heatmap("#heatmap1", "{{ gid }}");
+
+    </script>
+{% endblock %}

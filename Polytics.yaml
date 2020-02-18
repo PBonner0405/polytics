@@ -1,0 +1,177 @@
+#cloud-config
+write_files:
+  - path: /home/core/.dockercfg
+    owner: core:core
+    permissions: '0644'
+    content: |
+        {
+          "https://index.docker.io/v1/": {
+            "auth": "XXXXXXXXXXXXXX",
+            "email": "XXXXXXXXXXXXXX"
+          }
+        }
+
+coreos:
+  locksmith:
+    window-start: 05:00
+    window-length: 1h
+
+  update:
+    reboot-strategy: reboot
+
+  units:
+    - name: format-ebs-volume.service
+      command: start
+      content: |
+        [Unit]
+        Description=Formats the ebs volume if needed
+        Before=docker.service
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/bin/bash -c '(/usr/sbin/blkid -t TYPE=ext4 | grep /dev/xvdb) || (/usr/sbin/wipefs -fa /dev/xvdb && /usr/sbin/mkfs.ext4 /dev/xvdb)'
+
+    - name: media-data.mount
+      command: start
+      content: |
+        [Unit]
+        Description=Mount EBS Volume to /data
+        Requires=format-ebs-volume.service
+        After=format-ebs-volume.service
+        Before=docker.service
+        [Mount]
+        What=/dev/xvdb
+        Where=/media/data
+        Type=ext4
+
+    - name: db-data-vol.service
+      command: start
+      content: |
+        [Unit]
+        Description=db data vol
+        After=docker.service
+        Requires=docker.service
+        Requires=media-data.mount
+        After=media-data.mount
+
+        [Service]
+        User=core
+        TimeoutStartSec=0
+        ExecStartPre=/usr/bin/docker pull mongo:3.4
+        ExecStart=/usr/bin/docker run -d -v /media/data/db:/data/db --name MongoData mongo:3.4 echo "DB data"
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: mongoDB.service
+      command: start
+      content: |
+        [Unit]
+        Description=MongoDB
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        User=core
+        TimeoutStartSec=0
+        Restart=on-failure
+        ExecStartPre=-/usr/bin/docker kill MongoDB
+        ExecStartPre=-/usr/bin/docker rm MongoDB
+        ExecStartPre=/usr/bin/docker pull mongo:3.4
+        ExecStart=/usr/bin/docker run --name MongoDB --volumes-from MongoData mongo:3.4
+        ExecStop=/usr/bin/docker stop MongoDB
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: redis.service
+      command: start
+      content: |
+        [Unit]
+        Description=Redis
+        After=docker.service
+        Requires=docker.service
+
+        [Service]
+        User=core
+        TimeoutStartSec=0
+        Restart=on-failure
+        ExecStartPre=-/usr/bin/docker kill redis
+        ExecStartPre=-/usr/bin/docker rm redis
+        ExecStartPre=/usr/bin/docker pull redis:3.2-alpine
+        ExecStart=/usr/bin/docker run --name redis redis:3.2-alpine
+        ExecStop=/usr/bin/docker stop redis
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: extractor.service
+      command: start
+      content: |
+        [Unit]
+        Description=Lobbying data extractor
+        After=docker.service
+        Requires=docker.service
+        After=mongoDB.service
+        Requires=mongoDB.service
+
+        [Service]
+        User=core
+        TimeoutStartSec=0
+        Restart=on-failure
+        ExecStartPre=-/usr/bin/docker kill extractor
+        ExecStartPre=-/usr/bin/docker rm extractor
+        ExecStartPre=/usr/bin/docker pull mmathe/polytics2:extractor
+        ExecStart=/usr/bin/docker run --name extractor --link MongoDB:Mongo  XXXXXX/XXXXXXXX:XXXXXXXX
+        ExecStop=-/usr/bin/docker stop extractor
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: web.service
+      command: start
+      content: |
+        [Unit]
+        Description=Web front-end
+        After=docker.service
+        Requires=docker.service
+        After=mongoDB.service
+        Requires=mongoDB.service
+        After=redis.service
+        Requires=redis.service
+
+        [Service]
+        User=core
+        TimeoutStartSec=0
+        Restart=on-failure
+        ExecStartPre=-/usr/bin/docker kill web
+        ExecStartPre=-/usr/bin/docker rm web
+        ExecStartPre=/usr/bin/docker pull mmathe/polytics2:web
+        ExecStart=/usr/bin/docker run -p 5000:8000 --name web --link redis:redis --link MongoDB:Mongo  XXXXXX/XXXXXXXX:XXXXXXXX
+        ExecStop=-/usr/bin/docker stop web
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: nginx.service
+      command: start
+      content: |
+        [Unit]
+        Description=Nginx
+        After=docker.service
+        Requires=docker.service
+        After=web.service
+        Requires=web.service
+
+        [Service]
+        User=core
+        TimeoutStartSec=0
+        Restart=on-failure
+        ExecStartPre=-/usr/bin/docker kill nginx
+        ExecStartPre=-/usr/bin/docker rm nginx
+        ExecStartPre=/usr/bin/docker pull mmathe/polytics2:nginx
+        ExecStart=/usr/bin/docker run --name nginx -p 80:80 -p 443:443 --link web:web XXXXXX/XXXXXXXX:XXXXXXXX
+        ExecStop=/usr/bin/docker stop nginx
+
+        [Install]
+        WantedBy=multi-user.target

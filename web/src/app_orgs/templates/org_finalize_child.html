@@ -1,0 +1,69 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import render_field %}
+
+
+{% block header_title %}Review report{% endblock %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-danger">
+          <div class="panel-heading">
+            <h3 class="panel-title">Finalize org</h3>
+          </div>
+          <div class="panel-body">
+
+
+            <form method="POST">
+                <div class="row">
+                  <div class="col-md-6 right-border">
+                      <h4>{{ org.org_name }} (Org ID: {{ org.org_id }})</h4>
+                      <p><strong>Reviewed by:</strong> {{ org.reviewed_by }}</p>
+                      {{ render_field(form.parent_org_id) }}
+                      {{ form.org_id }}
+                      {{ form.csrf_token }}
+
+                  </div>
+                  <div class="col-md-6">
+                      <p>Similar existing parent org names:</p>
+                      {% if sims %}
+                          <ul>
+                              {% for sim in sims %}
+                              <li>{{ sim }}</li>
+                              {% endfor %}
+                          </ul>
+                      {% else %}
+                      <p>No similar names found</p>
+                      {% endif %}
+                  </div>
+              </div>
+                <div class="row">
+                    <div class="col-md-12">
+
+
+                        <a class="btn btn-info" href="{{ url_for('orgs.child_org_unlock', child_org_id=org.org_id) }}">Stop reviewing</a>
+                        <a class="btn btn-warning" href="{{ url_for('orgs.child_org_flag', child_org_id=org.org_id) }}">Flag for follow up</a>
+                        <span class="pull-right">
+                        {% if can_verify %}
+                            <input class="btn btn-primary" type="submit" value="Finalize">
+                        {% else %}
+                            <p>You cannot verify your own work</p>
+                        {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js_end_libs %}
+<script src="{{ url_for('static', filename='select2-4.0.3/js/select2-tab-fix.min.js') }}"></script>
+{% endblock %}
+
+{% block end_js %}
+    $("select").select2({ width: "100%", placeholder:"Select appropriate parent org."});
+{% endblock %}
